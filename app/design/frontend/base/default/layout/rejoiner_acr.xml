@@ -81,4 +81,8 @@
         <update handle="rejoiner_acr_tracking"/>
     </opc_index_index>
 
+    <checkout_prime_index>
+        <update handle="rejoiner_acr_tracking"/>
+    </checkout_prime_index>
+
 </layout>

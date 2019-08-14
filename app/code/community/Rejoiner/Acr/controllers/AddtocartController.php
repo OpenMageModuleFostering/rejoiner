@@ -2,12 +2,12 @@
 
 class Rejoiner_Acr_AddtocartController extends Mage_Core_Controller_Front_Action
 {
-
-    function indexAction()
+    public function indexAction()
     {
-        Mage::getSingleton('checkout/cart')->truncate();
+        /** @var Mage_Checkout_Model_Cart $cart */
+        $cart = Mage::getSingleton('checkout/cart');
+        $cart->truncate();
         $params = $this->getRequest()->getParams();
-        $cart   = Mage::helper('checkout/cart')->getCart();
         foreach ($params as $key => $product) {
             if ($product && is_array($product)) {
                 $prodModel = Mage::getModel('catalog/product')->load((int)$product['product']);
@@ -27,7 +27,10 @@ class Rejoiner_Acr_AddtocartController extends Mage_Core_Controller_Front_Action
         }
         $cart->save();
         Mage::getSingleton('checkout/session')->setCartWasUpdated(true);
-        $this->getResponse()->setRedirect(Mage::getUrl('checkout/cart/', array('_query' => $params)));
-    }
 
+        /** @var Rejoiner_Acr_Helper_Data $rejoinerHelper */
+        $rejoinerHelper = Mage::helper('rejoiner_acr');
+        $queryParams = array_merge($rejoinerHelper->returnGoogleAttributes(), $params);
+        $this->getResponse()->setRedirect(Mage::getUrl('checkout/cart/', array('_query' => $queryParams)));
+    }
 }

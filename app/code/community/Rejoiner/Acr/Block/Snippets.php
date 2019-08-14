@@ -18,7 +18,9 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
             $mediaUrl = Mage::getBaseUrl('media');
             $quoteItems = $quote->getAllItems();
             $displayPriceWithTax = $this->getTrackPriceWithTax();
+            $rejoinerHelper = Mage::helper('rejoiner_acr');
             $parentToChild = array();
+            $categories = array();
             /** @var Mage_Sales_Model_Quote_Item $item */
             foreach ($quoteItems as $item) {
                 /** @var Mage_Sales_Model_Quote_Item $parent */
@@ -27,7 +29,15 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                         $parentToChild[$parent->getId()] = $item;
                     }
                 }
+                $categories = array_merge($categories, $item->getProduct()->getCategoryIds());
             }
+
+            $categoriesArray = Mage::getModel('catalog/category')
+                ->getCollection()
+                ->addAttributeToSelect('name')
+                ->addFieldToFilter('entity_id', array('in' => $categories))
+                ->load()
+                ->getItems();
 
             foreach ($quote->getAllItems() as $item) {
                 if ($item->getParentItem()) {
@@ -35,6 +45,7 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                 }
 
                 $product = $item->getProduct();
+                $productCategories = $rejoinerHelper->getProductCategories($product, $categoriesArray);
                 $thumbnail = 'no_selection';
                 $imageHelper = Mage::helper('catalog/image');
                 // get thumbnail from configurable product
@@ -66,7 +77,7 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                 if ($thumbnail == 'no_selection') {
                     $imageHelper->init($product, 'thumbnail');
                     $image = Mage::getDesign()->getSkinUrl($imageHelper->getPlaceholder());
-                } elseif($imagePath = Mage::helper('rejoiner_acr')->resizeImage($thumbnail)) {
+                } elseif($imagePath = $rejoinerHelper->resizeImage($thumbnail)) {
                     $image = str_replace(Mage::getBaseDir('media') . '/', $mediaUrl, $imagePath);
                 } else {
                     $image = $mediaUrl . 'catalog/product' . $thumbnail;
@@ -84,8 +95,10 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                 $newItem['image_url']   = $image;
                 $newItem['price']       = (string) $this->_convertPriceToCents($prodPrice);
                 $newItem['product_id']  = (string) $item->getSku();
+                $newItem['product_url'] = (string) $item->getProduct()->getProductUrl();
                 $newItem['item_qty']    = (string) $item->getQty();
                 $newItem['qty_price']   = (string) $this->_convertPriceToCents($rowTotal);
+                $newItem['category']   = $productCategories;
                 $items[] = $newItem;
             }
         }

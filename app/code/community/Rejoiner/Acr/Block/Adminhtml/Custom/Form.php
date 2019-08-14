@@ -1,7 +1,6 @@
 <?php
 class Rejoiner_Acr_Block_Adminhtml_Custom_Form extends Mage_Adminhtml_Block_System_Config_Form_Field_Array_Abstract
 {
-
     public function __construct()
     {
         $this->addColumn('attr_name', array(

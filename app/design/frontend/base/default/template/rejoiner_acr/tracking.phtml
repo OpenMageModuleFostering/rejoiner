@@ -1,36 +1,37 @@
-<?php
-/* @var $this Rejoiner_Acr_Block_Snippets */
+<?php /* @var Rejoiner_Acr_Block_Snippets $this */ ?>
+<?php /** @var Rejoiner_Acr_Helper_Data $rejoinerHelper */
+    $rejoinerHelper = $this->helper('rejoiner_acr');
 ?>
 <script type="text/javascript">
     //<![CDATA[
     var _rejoiner = _rejoiner || [];
-    _rejoiner.push(["setAccount", "<?php echo $this->helper('rejoiner_acr')->getRejoinerSiteId() ?>"]);
-    _rejoiner.push(["setDomain", "<?php echo $this->helper('rejoiner_acr')->getDomain() ?>"]);
+    _rejoiner.push(["setAccount", "<?php echo $rejoinerHelper->getRejoinerSiteId(); ?>"]);
+    _rejoiner.push(["setDomain", "<?php echo $rejoinerHelper->getDomain(); ?>"]);
 
-    <?php if ($this->helper('rejoiner_acr')->getTrackNumberEnabled()):?>
+    <?php if ($rejoinerHelper->getTrackNumberEnabled()): ?>
         _rejoiner.push(["trackNumbers"]);
-    <?php endif ?>
-    <?php if ($this->helper('rejoiner_acr')->getPersistFormsEnabled()):?>
+    <?php endif; ?>
+    <?php if ($rejoinerHelper->getPersistFormsEnabled()): ?>
         _rejoiner.push(["persistForms"]);
-    <?php endif ?>
+    <?php endif; ?>
     (function() {
         var s = document.createElement('script'); s.type = 'text/javascript';
         s.async = true; s.src = 'https://s3.amazonaws.com/rejoiner/js/v3/t.js';
         var x = document.getElementsByTagName('script')[0]; x.parentNode.insertBefore(s, x);
     })();
-    <?php if (Mage::helper('checkout/cart')->getCart()->getSummaryQty()):?>
-        <?php $items = $this->getCartItems() ?>
-         <?php
-         $cartData = $this->getCartData();
-         $cartData .= ($this->getChildHtml('rejoiner_email'))? ' ,' . $this->getChildHtml('rejoiner_email'): '';?>
-         <?php if (Mage::getStoreConfig('checkout/rejoiner_acr/coupon_code')):?>
-         <?php $couponCode = $this->helper('rejoiner_acr')->generateCouponCode();
-              $cartData .= ','.'"promo"'.':'.'"'.$couponCode.'"';?>
-         <?php endif; ?>
+    <?php if (Mage::helper('checkout/cart')->getCart()->getSummaryQty()): ?>
+        <?php $items = $this->getCartItems();
+             $cartData = $this->getCartData();
+             $cartData .= ($this->getChildHtml('rejoiner_email'))? ' ,' . $this->getChildHtml('rejoiner_email'): '';
+        ?>
+        <?php if (Mage::getStoreConfig('checkout/rejoiner_acr/coupon_code')): ?>
+            <?php $couponCode = $rejoinerHelper->generateCouponCode();
+            $cartData .= ','.'"promo"'.':'.'"'.$couponCode.'"';?>
+        <?php endif; ?>
          _rejoiner.push(["setCartData", <?php echo $cartData? "{". $cartData . "}" : ''?>]);
         <?php foreach ($items as $item): ?>
             <?php $itemsAsJson = Mage::helper('core')->jsonEncode($item); ?>
-            _rejoiner.push(["setCartItem", <?php echo $itemsAsJson?>]);
+            _rejoiner.push(["setCartItem", <?php echo $itemsAsJson; ?>]);
         <?php endforeach ?>
     <?php endif ?>
     //]]>
@@ -39,9 +40,9 @@
 <script type="text/javascript">
     /** removeCartItem **/
     //<![CDATA[
-    <?php if ($removedItems = $this->helper('rejoiner_acr')->checkRemovedItem()): ?>
+    <?php if ($removedItems = $rejoinerHelper->checkRemovedItem()): ?>
         <?php foreach ($removedItems as $item): ?>
-        _rejoiner.push(['removeCartItem', {product_id: '<?php echo $item ?>'}]);
+        _rejoiner.push(['removeCartItem', {product_id: '<?php echo $item; ?>'}]);
         <?php endforeach; ?>
     <?php endif; ?>
     //]]>

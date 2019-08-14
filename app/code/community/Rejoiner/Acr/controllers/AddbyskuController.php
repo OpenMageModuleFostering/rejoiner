@@ -2,23 +2,22 @@
 
 class Rejoiner_Acr_AddbyskuController extends Mage_Core_Controller_Front_Action
 {
-
     const XML_PATH_REJOINER_DEBUG_ENABLED   = 'checkout/rejoiner_acr/debug_enabled';
 
-    function indexAction()
+    public function indexAction()
     {
         $params = $this->getRequest()->getParams();
-        if(Mage::helper('checkout/cart')->getItemsCount()) {
-            $quote = Mage::getSingleton('checkout/session')->getQuote();
-        } else {
-            $quote = Mage::helper('checkout/cart')->getCart();
-        }
+        /** @var Mage_Checkout_Helper_Cart $cart */
+        $cart = Mage::helper('checkout/cart');
+        $quote = $cart->getQuote();
+
         $successMessage = '';
         foreach ($params as $key => $product) {
             if ($product && is_array($product)) {
                 if (!isset($product['sku'])) {
                     continue;
                 }
+                /** @var Mage_Catalog_Model_Product $productModel */
                 $productModel = Mage::getModel('catalog/product');
                 $productBySKU = $productModel->loadByAttribute('sku', $product['sku']);
                 if (!$productBySKU->getId()) {
@@ -26,7 +25,9 @@ class Rejoiner_Acr_AddbyskuController extends Mage_Core_Controller_Front_Action
                 }
                 $productId = $productBySKU->getId();
                 if ($productId) {
-                    $qty = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productId)->getQty();
+                    /** @var Mage_CatalogInventory_Model_Stock_Item $stockItem */
+                    $stockItem = Mage::getModel('cataloginventory/stock_item');
+                    $qty = $stockItem->loadByProduct($productId)->getQty();
                     try {
                         if(!$quote->hasProductId($productId) && is_numeric($product['qty']) && $qty > $product['qty']) {
                             $quote->addProduct($productBySKU, (int)$product['qty']);
@@ -42,7 +43,7 @@ class Rejoiner_Acr_AddbyskuController extends Mage_Core_Controller_Front_Action
             }
         }
         if ($params['coupon_code']) {
-            Mage::getSingleton('checkout/cart')->getQuote()->setCouponCode($params['coupon_code'])->collectTotals()->save();;
+            $quote->setCouponCode($params['coupon_code'])->collectTotals()->save();;
         }
         try {
             $quote->save();
@@ -57,5 +58,4 @@ class Rejoiner_Acr_AddbyskuController extends Mage_Core_Controller_Front_Action
         }
         $this->getResponse()->setRedirect(Mage::getUrl('checkout/cart/'));
     }
-
 }

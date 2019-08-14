@@ -1,11 +1,12 @@
-<?php
-/* @var $this Rejoiner_Acr_Block_Snippets */
+<?php /* @var Rejoiner_Acr_Block_Snippets $this */ ?>
+<?php /** @var Rejoiner_Acr_Helper_Data $rejoinerHelper */
+    $rejoinerHelper = $this->helper('rejoiner_acr');
 ?>
 <!-- Rejoiner Conversion  -->
 <script type="text/javascript">
     var _rejoiner = _rejoiner || [];
-    _rejoiner.push(["setAccount", "<?php echo $this->helper('rejoiner_acr')->getRejoinerSiteId() ?>"]);
-    _rejoiner.push(["setDomain", "<?php echo $this->helper('rejoiner_acr')->getDomain() ?>"]);
+    _rejoiner.push(["setAccount", "<?php echo $rejoinerHelper->getRejoinerSiteId(); ?>"]);
+    _rejoiner.push(["setDomain", "<?php echo $rejoinerHelper->getDomain(); ?>"]);
     _rejoiner.push(["sendConversion"]);
 
     (function() {

@@ -2,7 +2,6 @@
 
 class Rejoiner_Acr_Adminhtml_RejoinerController extends Mage_Adminhtml_Controller_Action
 {
-
     public function denyNotificationAction()
     {
         if ($this->getRequest()->getParam('isAjax', false)) {
