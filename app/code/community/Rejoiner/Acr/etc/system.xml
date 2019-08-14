@@ -4,7 +4,7 @@
         <checkout>
             <groups>
                 <rejoiner_acr translate="label" module="rejoiner_acr">
-                    <label>Rejoiner Abandoned Cart Recovery</label>
+                    <label>eCommerce Lifecycle Email by Rejoiner</label>
                     <frontend_type>text</frontend_type>
                     <sort_order>100</sort_order>
                     <show_in_default>1</show_in_default>
@@ -21,7 +21,7 @@
                             <show_in_store>1</show_in_store>
                         </enabled>
                         <site_id translate="label">
-                            <label>Rejoiner site-id</label>
+                            <label>Rejoiner Site ID</label>
                             <frontend_type>text</frontend_type>
                             <sort_order>20</sort_order>
                             <show_in_default>1</show_in_default>
