@@ -37,14 +37,14 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                 $imageHelper = Mage::helper('catalog/image');
                 // get thumbnail from configurable product
                 if ($product->getData('thumbnail') && ($product->getData('thumbnail') != 'no_selection')) {
-                    $thumbnail = $mediaUrl . 'catalog/product' . $product->getData('thumbnail');
+                    $thumbnail = $product->getData('thumbnail');
                     // or try finding it in the simple one
                 } elseif ($item->getProductType() == Mage_Catalog_Model_Product_Type_Configurable::TYPE_CODE) {
                     /** @var Mage_Sales_Model_Quote_Item $simpleItem */
                     $simpleItem = $parentToChild[$item->getId()];
                     $simpleProduct = $simpleItem->getProduct();
                     if ($simpleProduct->getData('thumbnail') && ($simpleProduct->getData('thumbnail') != 'no_selection')) {
-                        $thumbnail = $mediaUrl . 'catalog/product' . $simpleProduct->getData('thumbnail');
+                        $thumbnail = $simpleProduct->getData('thumbnail');
                     }
                 } elseif ($productId = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getEntityId())) {
                     if (isset($productId[0])) {
@@ -53,18 +53,22 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                             ->addAttributeToSelect('thumbnail')
                             ->addAttributeToFilter('entity_id', $productId)
                             ->getFirstItem();
-                        $thumbnail =  $mediaUrl . 'catalog/product' . $configurableProduct->getData('thumbnail');
+                        $thumbnail = $configurableProduct->getData('thumbnail');
                     }
                 }
                 // use placeholder image if nor simple nor configurable products does not have images
                 if ($thumbnail == 'no_selection') {
                     $imageHelper->init($product, 'thumbnail');
-                    $thumbnail = Mage::getDesign()->getSkinUrl($imageHelper->getPlaceholder());
+                    $image = Mage::getDesign()->getSkinUrl($imageHelper->getPlaceholder());
+                } elseif($imagePath = Mage::helper('rejoiner_acr')->resizeImage($thumbnail)) {
+                    $image = str_replace(Mage::getBaseDir('media') . '/', $mediaUrl, $imagePath);
+                } else {
+                    $image = $mediaUrl . 'catalog/product' . $thumbnail;
                 }
 
                 $newItem = array();
                 $newItem['name']        = $item->getName();
-                $newItem['image_url']   = $thumbnail;
+                $newItem['image_url']   = $image;
                 $newItem['price']       = (string) $this->_convertPriceToCents($item->getBaseCalculationPrice());
                 $newItem['product_id']  = (string) $item->getSku();
                 $newItem['item_qty']    = (string) $item->getQty();

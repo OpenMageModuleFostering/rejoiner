@@ -14,7 +14,10 @@ class Rejoiner_Acr_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_REJOINER_DOMAIN          = 'checkout/rejoiner_acr/domain';
     const XML_PATH_REJOINER_TRACK_NUMBERS   = 'checkout/rejoiner_acr/track_numbers';
     const XML_PATH_REJOINER_PERSIST_FORMS   = 'checkout/rejoiner_acr/persist_forms';
+    const XML_PATH_REJOINER_THUMBNAIL_SIZE  =  'checkout/rejoiner_acr/thumbnail_size';
+    const REMOVED_CART_ITEM_SKU_VARIABLE    = 'rejoiner_sku';
 
+    protected $_currentProtocolSecurity = null;
 
     public function getRejoinerSiteId()
     {
@@ -36,7 +39,9 @@ class Rejoiner_Acr_Helper_Data extends Mage_Core_Helper_Abstract
                 }
             }
         }
-        $url = Mage::getUrl('rejoiner/addtocart?'.http_build_query($product));
+        $googleAttributesArray = $this->returnGoogleAttributes();
+        $customAttributesArray = $this->returnCustomAttributes();
+        $url = Mage::getUrl('rejoiner/addtocart?'.http_build_query(array_merge($product, $googleAttributesArray, $customAttributesArray)));
         return substr($url, 0, strlen($url)-1);
     }
 
@@ -106,5 +111,86 @@ class Rejoiner_Acr_Helper_Data extends Mage_Core_Helper_Abstract
         }
 
         return $secure;
+    }
+
+    /**
+     * @param $productImageName
+     * @return bool
+     */
+
+    public function resizeImage($productImageName)
+    {
+        if($size = $this->_parseSize(Mage::getStoreConfig(self::XML_PATH_REJOINER_THUMBNAIL_SIZE))) {
+            $imageResized = Mage::getBaseDir('media') . '/catalog/resized/' . $size['width'] . 'x' . $size['height'] . $productImageName;
+            if (!file_exists($imageResized)) {
+                $imageObj = new Varien_Image(Mage::getBaseDir('media') . '/catalog/product' . $productImageName);
+                $imageObj->resize($size['width'], $size['height']);
+                $imageObj->save($imageResized);
+            }
+        } else {
+            return false;
+        }
+        return $imageResized;
+    }
+
+    /**
+     * @param $string
+     * @return array|bool
+     */
+
+    protected function _parseSize($string)
+    {
+        $size = explode('x', strtolower($string));
+        if (sizeof($size) == 2) {
+            return array(
+                'width' => ($size[0] > 0) ? $size[0] : null,
+                'height' => ($size[1] > 0) ? $size[1] : null,
+            );
+        }
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+
+    /**
+     * @return bool|mixed
+     */
+    public function checkRemovedItem()
+    {
+        $session = Mage::getSingleton('core/session',  array('name' => 'frontend'));
+        if ($session->hasData(self::REMOVED_CART_ITEM_SKU_VARIABLE)) {
+            $removedItems = $session->getData(self::REMOVED_CART_ITEM_SKU_VARIABLE);
+            $session->unsetData(self::REMOVED_CART_ITEM_SKU_VARIABLE);
+            return $removedItems;
+        }
+        return false;
+    }
+
+
+
+    public function returnGoogleAttributes() {
+        $result=array();
+        if ($googleAnalitics = Mage::getStoreConfig('checkout/rejoiner_acr/google_attributes')) {
+            foreach (unserialize($googleAnalitics) as $attr) {
+                if ($attr['attr_name'] && $attr['value']) {
+                    $result[$attr['attr_name']] = $attr['value'];
+                }
+            }
+        }
+        return $result;
+    }
+
+    public function returnCustomAttributes() {
+        $result=array();
+        if ($customAttr = Mage::getStoreConfig('checkout/rejoiner_acr/custom_attributes')) {
+            foreach (unserialize($customAttr) as $attr) {
+                if ($attr['attr_name'] && $attr['value']) {
+                    $result[$attr['attr_name']] = $attr['value'];
+                }
+            }
+        }
+        return $result;
     }
 }

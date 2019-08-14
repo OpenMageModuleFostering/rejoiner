@@ -80,4 +80,15 @@ class Rejoiner_Acr_Model_Observer
             }
         }
     }
+
+    public function removeCartItem(Varien_Event_Observer $observer)
+    {
+        $session = Mage::getSingleton('core/session',  array('name' => 'frontend'));
+        if ($quote = $observer->getQuoteItem()) {
+            $quote->getSku();
+            $removedItem[] = $quote->getSku();
+            $session->setData(Rejoiner_Acr_Helper_Data::REMOVED_CART_ITEM_SKU_VARIABLE, $removedItem);
+        }
+
+    }
 }

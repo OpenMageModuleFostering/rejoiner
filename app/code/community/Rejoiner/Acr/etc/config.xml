@@ -56,6 +56,14 @@
                     </rejoiner_order_success>
                 </observers>
             </checkout_onepage_controller_success_action>
+            <sales_quote_remove_item>
+                <observers>
+                    <remove_cart_item>
+                        <class>rejoiner_acr/observer</class>
+                        <method>removeCartItem</method>
+                    </remove_cart_item>
+                </observers>
+            </sales_quote_remove_item>
         </events>
     </frontend>
     <admin>

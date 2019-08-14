@@ -102,6 +102,35 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </salesrule_model>
+                        <thumbnail_size>
+                            <label>Thumbnail Default Size</label>
+                            <comment>Example format: 200x300.</comment>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>120</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>0</show_in_website>
+                            <show_in_store>0</show_in_store>
+                        </thumbnail_size>
+                        <google_attributes translate="label">
+                            <label>Google Analytics data</label>
+                            <frontend_model>rejoiner_acr/adminhtml_preinstalled_form</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+                            <sort_order>130</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><show_standard>0</show_standard></depends>
+                        </google_attributes>
+                        <custom_attributes translate="label">
+                            <label>Custom parameters</label>
+                            <frontend_model>rejoiner_acr/adminhtml_custom_form</frontend_model>
+                            <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+                            <sort_order>140</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <depends><show_standard>0</show_standard></depends>
+                        </custom_attributes>
                     </fields>
                 </rejoiner_acr>
             </groups>
