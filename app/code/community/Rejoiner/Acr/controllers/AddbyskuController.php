@@ -16,7 +16,14 @@ class Rejoiner_Acr_AddbyskuController extends Mage_Core_Controller_Front_Action
         $successMessage = '';
         foreach ($params as $key => $product) {
             if ($product && is_array($product)) {
-                $productBySKU = Mage::getModel('catalog/product')->loadByAttribute('sku', $product['sku']);
+                if (!isset($product['sku'])) {
+                    continue;
+                }
+                $productModel = Mage::getModel('catalog/product');
+                $productBySKU = $productModel->loadByAttribute('sku', $product['sku']);
+                if (!$productBySKU->getId()) {
+                    continue;
+                }
                 $productId = $productBySKU->getId();
                 if ($productId) {
                     $qty = Mage::getModel('cataloginventory/stock_item')->loadByProduct($productId)->getQty();
