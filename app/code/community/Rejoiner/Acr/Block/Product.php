@@ -7,6 +7,8 @@ class Rejoiner_Acr_Block_Product extends Rejoiner_Acr_Block_Base
     public function getCurrentProductInfo()
     {
         $product        = Mage::registry('current_product');
+        $stocklevel = (int)Mage::getModel('cataloginventory/stock_item')
+            ->loadByProduct($product)->getQty();
         $imageHelper    = Mage::helper('catalog/image');
         $rejoinerHelper = Mage::helper('rejoiner_acr');
         $mediaUrl       = Mage::getBaseUrl('media');
@@ -43,7 +45,8 @@ class Rejoiner_Acr_Block_Product extends Rejoiner_Acr_Block_Base
             'price'       => $this->_convertPriceToCents((string) $product->getPrice()),
             'product_id'  => (string) $product->getSku(),
             'product_url' => (string) $product->getProductUrl(),
-            'category'    => $categories
+            'category'    => $categories,
+            'stock'       => $stocklevel
         );
         return str_replace('\\/', '/', json_encode($productData));
     }
