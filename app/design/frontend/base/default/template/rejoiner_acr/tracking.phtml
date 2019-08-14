@@ -30,7 +30,6 @@
          _rejoiner.push(["setCartData", <?php echo $cartData? "{". $cartData . "}" : ''?>]);
         <?php foreach ($items as $item): ?>
             <?php $itemsAsJson = Mage::helper('core')->jsonEncode($item); ?>
-            <?php $itemsAsJson = str_replace('\\', '', $itemsAsJson); ?>
             _rejoiner.push(["setCartItem", <?php echo $itemsAsJson?>]);
         <?php endforeach ?>
     <?php endif ?>

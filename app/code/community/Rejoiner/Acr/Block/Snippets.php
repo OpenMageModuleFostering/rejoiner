@@ -71,7 +71,7 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                 }
 
                 $newItem = array();
-                $newItem['name']        = $item->getName();
+                $newItem['name']        = addslashes($item->getName());
                 $newItem['image_url']   = $image;
                 $newItem['price']       = (string) $this->_convertPriceToCents($item->getBaseCalculationPrice());
                 $newItem['product_id']  = (string) $item->getSku();

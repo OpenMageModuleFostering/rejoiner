@@ -76,4 +76,9 @@
     <onepagecheckout_index_updatecheckout>
         <update handle="rejoiner_acr_tracking"/>
     </onepagecheckout_index_updatecheckout>
+
+    <opc_index_index>
+        <update handle="rejoiner_acr_tracking"/>
+    </opc_index_index>
+
 </layout>
