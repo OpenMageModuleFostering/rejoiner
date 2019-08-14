@@ -9,34 +9,7 @@ class Rejoiner_Acr_Model_Observer
     const XML_PATH_REJOINER_API_SECRET  = 'checkout/rejoiner_acr/api_secret';
     const XML_PATH_REJOINER_API_SITE_ID = 'checkout/rejoiner_acr/site_id';
 
-    public function orderSuccess(Varien_Event_Observer $observer)
-    {
-
-        if (Mage::getStoreConfig('checkout/rejoiner_acr/email')) {
-            $orders = $observer->getOrderIds();
-            $orderModel = Mage::getModel('sales/order')->load($orders[0]);
-            $customerEmail = $orderModel->getCustomerEmail();
-            $fromName = Mage::getStoreConfig('trans_email/ident_general/name');
-            $fromEmail = Mage::getStoreConfig('trans_email/ident_general/email');
-            $mail = Mage::getModel('core/email');
-            $mail->setToName('Rejoiner');
-            $mail->setToEmail('remove@rejoiner.com');
-            $mail->setBody('');
-            $mail->setSubject($customerEmail);
-            $mail->setFromEmail($fromEmail);
-            $mail->setFromName($fromName);
-            $mail->setType('html');
-            try {
-                $mail->send();
-            }
-            catch (Exception $e) {
-                Mage::log('Error while sending email to remove@rejoiner.com');
-            }
-        }
-        $this->_trackOrderSuccessConversion($observer);
-    }
-
-    protected function _trackOrderSuccessConversion(Varien_Event_Observer $observer)
+    public function trackOrderSuccessConversion(Varien_Event_Observer $observer)
     {
         /** @var Mage_Checkout_Model_Session $session */
         $lastOrderId = $observer->getEvent()->getData('order_ids');

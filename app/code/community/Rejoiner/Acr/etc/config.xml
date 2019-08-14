@@ -52,7 +52,7 @@
                 <observers>
                     <rejoiner_order_success>
                         <class>rejoiner_acr/observer</class>
-                        <method>orderSuccess</method>
+                        <method>trackOrderSuccessConversion</method>
                     </rejoiner_order_success>
                 </observers>
             </checkout_onepage_controller_success_action>
