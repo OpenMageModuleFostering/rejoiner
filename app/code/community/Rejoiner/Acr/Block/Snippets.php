@@ -56,6 +56,10 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                         $thumbnail = $configurableProduct->getData('thumbnail');
                     }
                 }
+                
+                if (!file_exists(Mage::getBaseDir('media') . '/catalog/product' . $thumbnail)) {
+                    $thumbnail = 'no_selection';
+                }
                 // use placeholder image if nor simple nor configurable products does not have images
                 if ($thumbnail == 'no_selection') {
                     $imageHelper->init($product, 'thumbnail');
