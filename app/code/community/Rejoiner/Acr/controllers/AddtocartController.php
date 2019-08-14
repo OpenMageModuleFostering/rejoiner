@@ -1,11 +1,5 @@
 <?php
-/**
- * Created by JetBrains PhpStorm.
- * User: pavel
- * Date: 5/16/13
- * Time: 12:32 PM
- * To change this template use File | Settings | File Templates.
- */
+
 class Rejoiner_Acr_AddtocartController extends Mage_Core_Controller_Front_Action
 {
 

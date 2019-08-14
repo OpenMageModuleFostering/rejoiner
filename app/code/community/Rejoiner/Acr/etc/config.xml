@@ -99,6 +99,7 @@
         <checkout>
             <rejoiner_acr>
                 <email>0</email>
+                <debug_enabled>1</debug_enabled>
             </rejoiner_acr>
         </checkout>
     </default>

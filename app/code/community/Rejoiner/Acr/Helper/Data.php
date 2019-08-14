@@ -14,7 +14,7 @@ class Rejoiner_Acr_Helper_Data extends Mage_Core_Helper_Abstract
     const XML_PATH_REJOINER_DOMAIN          = 'checkout/rejoiner_acr/domain';
     const XML_PATH_REJOINER_TRACK_NUMBERS   = 'checkout/rejoiner_acr/track_numbers';
     const XML_PATH_REJOINER_PERSIST_FORMS   = 'checkout/rejoiner_acr/persist_forms';
-    const XML_PATH_REJOINER_THUMBNAIL_SIZE  =  'checkout/rejoiner_acr/thumbnail_size';
+    const XML_PATH_REJOINER_THUMBNAIL_SIZE  = 'checkout/rejoiner_acr/thumbnail_size';
     const REMOVED_CART_ITEM_SKU_VARIABLE    = 'rejoiner_sku';
 
     protected $_currentProtocolSecurity = null;
@@ -70,9 +70,9 @@ class Rejoiner_Acr_Helper_Data extends Mage_Core_Helper_Abstract
         $couponCode = Mage::helper('checkout/cart')->getCart()->getQuote()->getPromo();
         $rule_id = Mage::getStoreConfig('checkout/rejoiner_acr/salesrule_model');
         $ruleItem = Mage::getModel('salesrule/rule')
-                    ->getCollection()
-                    ->addFieldToFilter('rule_id', array('eq' => $rule_id))
-                    ->getFirstItem();
+            ->getCollection()
+            ->addFieldToFilter('rule_id', array('eq' => $rule_id))
+            ->getFirstItem();
         if ($ruleItem->getUseAutoGeneration() && !$couponCode)
         {
             $couponCode = Mage::getModel('salesrule/coupon_codegenerator')->generateCode();

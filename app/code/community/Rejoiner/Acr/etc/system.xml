@@ -131,6 +131,16 @@
                             <show_in_store>1</show_in_store>
                             <depends><show_standard>0</show_standard></depends>
                         </custom_attributes>
+                        <debug_enabled  translate="label">
+                            <label>Debig Mode</label>
+                            <frontend_type>select</frontend_type>
+                            <comment>Enable this parameter if you want to enabled debug extension.</comment>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>150</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </debug_enabled>
                     </fields>
                 </rejoiner_acr>
             </groups>
