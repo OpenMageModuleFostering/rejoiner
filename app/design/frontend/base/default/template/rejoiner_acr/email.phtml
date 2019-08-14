@@ -1,0 +1,7 @@
+<?php
+if ($customer = Mage::getSingleton('customer/session')->isLoggedIn()):
+    $customerData = Mage::getModel('customer/customer')->load(Mage::getSingleton('customer/session')->getId())->getData(); ?>
+"email":"<?php echo $customerData['email']?>"
+<?php else:
+    return false;
+endif;?>
