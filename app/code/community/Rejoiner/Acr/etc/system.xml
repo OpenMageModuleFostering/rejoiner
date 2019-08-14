@@ -64,6 +64,16 @@
                             <show_in_website>1</show_in_website>
                             <show_in_store>1</show_in_store>
                         </track_numbers>
+                        <price_with_tax>
+                            <label>Track Prices with Taxes</label>
+                            <frontend_type>select</frontend_type>
+                            <comment>Enable this parameter if you want to track price with taxes.</comment>
+                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                            <sort_order>75</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                        </price_with_tax>
                         <persist_forms>
                             <label>Persist Forms</label>
                             <frontend_type>select</frontend_type>
@@ -122,7 +132,7 @@
                             <depends><show_standard>0</show_standard></depends>
                         </custom_attributes>
                         <debug_enabled  translate="label">
-                            <label>Debig Mode</label>
+                            <label>Debug Mode</label>
                             <frontend_type>select</frontend_type>
                             <comment>Enable this parameter if you want to enabled debug extension.</comment>
                             <source_model>adminhtml/system_config_source_yesno</source_model>

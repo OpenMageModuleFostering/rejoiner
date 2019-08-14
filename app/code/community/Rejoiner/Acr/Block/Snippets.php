@@ -9,13 +9,15 @@
 class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
 {
 
+    const XML_PATH_REJOINER_TRACK_PRICE_WITH_TAX = 'checkout/rejoiner_acr/price_with_tax';
+
     public function getCartItems()
     {
         $items = array();
         if ($quote = $this->_getQuote()) {
             $mediaUrl = Mage::getBaseUrl('media');
             $quoteItems = $quote->getAllItems();
-
+            $displayPriceWithTax = $this->getTrackPriceWithTax();
             $parentToChild = array();
             /** @var Mage_Sales_Model_Quote_Item $item */
             foreach ($quoteItems as $item) {
@@ -70,13 +72,20 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                     $image = $mediaUrl . 'catalog/product' . $thumbnail;
                 }
 
+                if ($displayPriceWithTax) {
+                    $prodPrice = $item->getPriceInclTax();
+                    $rowTotal  = $item->getRowTotalInclTax();
+                } else {
+                    $prodPrice = $item->getBaseCalculationPrice();
+                    $rowTotal  = $item->getBaseRowTotal();
+                }
                 $newItem = array();
                 $newItem['name']        = addslashes($item->getName());
                 $newItem['image_url']   = $image;
-                $newItem['price']       = (string) $this->_convertPriceToCents($item->getBaseCalculationPrice());
+                $newItem['price']       = (string) $this->_convertPriceToCents($prodPrice);
                 $newItem['product_id']  = (string) $item->getSku();
                 $newItem['item_qty']    = (string) $item->getQty();
-                $newItem['qty_price']   = (string) $this->_convertPriceToCents($item->getBaseRowTotal());
+                $newItem['qty_price']   = (string) $this->_convertPriceToCents($rowTotal);
                 $items[] = $newItem;
             }
         }
@@ -86,7 +95,13 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
     public function getCartData()
     {
         if ($quote = $this->_getQuote()) {
-            return '"totalItems":"'.$this->_getQuote()->getItemsQty().'","value":"'.$this->_convertPriceToCents($this->_getQuote()->getBaseSubtotal()).'","returnUrl":"'.Mage::helper('rejoiner_acr')->getRestoreUrl().'"';
+            if ($this->getTrackPriceWithTax()) {
+                $total = $this->_getQuote()->getGrandTotal();
+            } else {
+                $total = $this->_getQuote()->getSubtotal();
+            }
+
+            return '"totalItems":"'.$this->_getQuote()->getItemsQty().'","value":"'.$this->_convertPriceToCents($total).'","returnUrl":"'.Mage::helper('rejoiner_acr')->getRestoreUrl().'"';
         }
         return '';
     }
@@ -99,6 +114,11 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
 
     protected function _convertPriceToCents($price) {
         return round($price*100);
+    }
+
+    protected function getTrackPriceWithTax()
+    {
+        return Mage::getStoreConfig(self::XML_PATH_REJOINER_TRACK_PRICE_WITH_TAX);
     }
 
 }
