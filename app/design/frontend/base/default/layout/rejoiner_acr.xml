@@ -68,21 +68,4 @@
     <firecheckout_index_saveorder>
         <update handle="rejoiner_acr_tracking"/>
     </firecheckout_index_saveorder>
-
-    <onepagecheckout_index_success>
-        <update handle="rejoiner_acr_tracking"/>
-    </onepagecheckout_index_success>
-
-    <onepagecheckout_index_updatecheckout>
-        <update handle="rejoiner_acr_tracking"/>
-    </onepagecheckout_index_updatecheckout>
-
-    <opc_index_index>
-        <update handle="rejoiner_acr_tracking"/>
-    </opc_index_index>
-
-    <checkout_prime_index>
-        <update handle="rejoiner_acr_tracking"/>
-    </checkout_prime_index>
-
 </layout>

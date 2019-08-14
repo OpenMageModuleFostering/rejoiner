@@ -1,6 +1,7 @@
 <?php
-/** @var Mage_Customer_Model_Session $customerSession */
-$customerSession = Mage::getSingleton('customer/session');
-if ($customerSession->isLoggedIn()): ?>
-"email":"<?php echo $customerSession->getCustomer()->getEmail(); ?>"
-<?php endif; ?>
+if ($customer = Mage::getSingleton('customer/session')->isLoggedIn()):
+    $customerData = Mage::getModel('customer/customer')->load(Mage::getSingleton('customer/session')->getId())->getData(); ?>
+"email":"<?php echo $customerData['email']?>"
+<?php else:
+    return false;
+endif;?>

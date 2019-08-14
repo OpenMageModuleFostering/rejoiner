@@ -2,7 +2,7 @@
 <config>
     <modules>
         <Rejoiner_Acr>
-            <version>1.1.23</version>
+            <version>1.0.1.0</version>
         </Rejoiner_Acr>
     </modules>
     <global>
@@ -52,18 +52,10 @@
                 <observers>
                     <rejoiner_order_success>
                         <class>rejoiner_acr/observer</class>
-                        <method>trackOrderSuccessConversion</method>
+                        <method>orderSuccess</method>
                     </rejoiner_order_success>
                 </observers>
             </checkout_onepage_controller_success_action>
-            <sales_quote_remove_item>
-                <observers>
-                    <remove_cart_item>
-                        <class>rejoiner_acr/observer</class>
-                        <method>removeCartItem</method>
-                    </remove_cart_item>
-                </observers>
-            </sales_quote_remove_item>
         </events>
     </frontend>
     <admin>
@@ -99,7 +91,6 @@
         <checkout>
             <rejoiner_acr>
                 <email>0</email>
-                <debug_enabled>1</debug_enabled>
             </rejoiner_acr>
         </checkout>
     </default>

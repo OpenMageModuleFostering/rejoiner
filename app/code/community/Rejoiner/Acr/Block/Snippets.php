@@ -9,18 +9,14 @@
 class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
 {
 
-    const XML_PATH_REJOINER_TRACK_PRICE_WITH_TAX = 'checkout/rejoiner_acr/price_with_tax';
-
     public function getCartItems()
     {
         $items = array();
         if ($quote = $this->_getQuote()) {
             $mediaUrl = Mage::getBaseUrl('media');
             $quoteItems = $quote->getAllItems();
-            $displayPriceWithTax = $this->getTrackPriceWithTax();
-            $rejoinerHelper = Mage::helper('rejoiner_acr');
+
             $parentToChild = array();
-            $categories = array();
             /** @var Mage_Sales_Model_Quote_Item $item */
             foreach ($quoteItems as $item) {
                 /** @var Mage_Sales_Model_Quote_Item $parent */
@@ -29,15 +25,7 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                         $parentToChild[$parent->getId()] = $item;
                     }
                 }
-                $categories = array_merge($categories, $item->getProduct()->getCategoryIds());
             }
-
-            $categoriesArray = Mage::getModel('catalog/category')
-                ->getCollection()
-                ->addAttributeToSelect('name')
-                ->addFieldToFilter('entity_id', array('in' => $categories))
-                ->load()
-                ->getItems();
 
             foreach ($quote->getAllItems() as $item) {
                 if ($item->getParentItem()) {
@@ -45,19 +33,18 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                 }
 
                 $product = $item->getProduct();
-                $productCategories = $rejoinerHelper->getProductCategories($product, $categoriesArray);
                 $thumbnail = 'no_selection';
                 $imageHelper = Mage::helper('catalog/image');
                 // get thumbnail from configurable product
                 if ($product->getData('thumbnail') && ($product->getData('thumbnail') != 'no_selection')) {
-                    $thumbnail = $product->getData('thumbnail');
+                    $thumbnail = $mediaUrl . 'catalog/product' . $product->getData('thumbnail');
                     // or try finding it in the simple one
                 } elseif ($item->getProductType() == Mage_Catalog_Model_Product_Type_Configurable::TYPE_CODE) {
                     /** @var Mage_Sales_Model_Quote_Item $simpleItem */
                     $simpleItem = $parentToChild[$item->getId()];
                     $simpleProduct = $simpleItem->getProduct();
                     if ($simpleProduct->getData('thumbnail') && ($simpleProduct->getData('thumbnail') != 'no_selection')) {
-                        $thumbnail = $simpleProduct->getData('thumbnail');
+                        $thumbnail = $mediaUrl . 'catalog/product' . $simpleProduct->getData('thumbnail');
                     }
                 } elseif ($productId = Mage::getModel('catalog/product_type_configurable')->getParentIdsByChild($product->getEntityId())) {
                     if (isset($productId[0])) {
@@ -66,39 +53,22 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
                             ->addAttributeToSelect('thumbnail')
                             ->addAttributeToFilter('entity_id', $productId)
                             ->getFirstItem();
-                        $thumbnail = $configurableProduct->getData('thumbnail');
+                        $thumbnail =  $mediaUrl . 'catalog/product' . $configurableProduct->getData('thumbnail');
                     }
-                }
-                
-                if (!file_exists(Mage::getBaseDir('media') . '/catalog/product' . $thumbnail)) {
-                    $thumbnail = 'no_selection';
                 }
                 // use placeholder image if nor simple nor configurable products does not have images
                 if ($thumbnail == 'no_selection') {
                     $imageHelper->init($product, 'thumbnail');
-                    $image = Mage::getDesign()->getSkinUrl($imageHelper->getPlaceholder());
-                } elseif($imagePath = $rejoinerHelper->resizeImage($thumbnail)) {
-                    $image = str_replace(Mage::getBaseDir('media') . '/', $mediaUrl, $imagePath);
-                } else {
-                    $image = $mediaUrl . 'catalog/product' . $thumbnail;
+                    $thumbnail = Mage::getDesign()->getSkinUrl($imageHelper->getPlaceholder());
                 }
 
-                if ($displayPriceWithTax) {
-                    $prodPrice = $item->getPriceInclTax();
-                    $rowTotal  = $item->getRowTotalInclTax();
-                } else {
-                    $prodPrice = $item->getBaseCalculationPrice();
-                    $rowTotal  = $item->getBaseRowTotal();
-                }
                 $newItem = array();
-                $newItem['name']        = addslashes($item->getName());
-                $newItem['image_url']   = $image;
-                $newItem['price']       = (string) $this->_convertPriceToCents($prodPrice);
+                $newItem['name']        = $item->getName();
+                $newItem['image_url']   = $thumbnail;
+                $newItem['price']       = (string) $this->_convertPriceToCents($item->getBaseCalculationPrice());
                 $newItem['product_id']  = (string) $item->getSku();
-                $newItem['product_url'] = (string) $item->getProduct()->getProductUrl();
                 $newItem['item_qty']    = (string) $item->getQty();
-                $newItem['qty_price']   = (string) $this->_convertPriceToCents($rowTotal);
-                $newItem['category']   = $productCategories;
+                $newItem['qty_price']   = (string) $this->_convertPriceToCents($item->getBaseRowTotal());
                 $items[] = $newItem;
             }
         }
@@ -108,13 +78,7 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
     public function getCartData()
     {
         if ($quote = $this->_getQuote()) {
-            if ($this->getTrackPriceWithTax()) {
-                $total = $this->_getQuote()->getGrandTotal();
-            } else {
-                $total = $this->_getQuote()->getSubtotal();
-            }
-
-            return '"totalItems":"'.$this->_getQuote()->getItemsQty().'","value":"'.$this->_convertPriceToCents($total).'","returnUrl":"'.Mage::helper('rejoiner_acr')->getRestoreUrl().'"';
+            return '"totalItems":"'.$this->_getQuote()->getItemsQty().'","value":"'.$this->_convertPriceToCents($this->_getQuote()->getBaseSubtotal()).'","returnUrl":"'.Mage::helper('rejoiner_acr')->getRestoreUrl().'"';
         }
         return '';
     }
@@ -127,11 +91,6 @@ class Rejoiner_Acr_Block_Snippets extends Mage_Core_Block_Template
 
     protected function _convertPriceToCents($price) {
         return round($price*100);
-    }
-
-    protected function getTrackPriceWithTax()
-    {
-        return Mage::getStoreConfig(self::XML_PATH_REJOINER_TRACK_PRICE_WITH_TAX);
     }
 
 }
