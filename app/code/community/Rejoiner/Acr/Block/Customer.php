@@ -23,7 +23,8 @@ class Rejoiner_Acr_Block_Customer extends Rejoiner_Acr_Block_Base
             'age'    => $this->getCustomerAge(),
             'gender' => $this->getGender(),
             'en'     => substr(Mage::getStoreConfig(Mage_Core_Model_Locale::XML_PATH_DEFAULT_LOCALE,0),0,2),
-            'name'   => $this->getCurrentCustomer()->getName()
+            'name'   => $this->getCurrentCustomer()->getFirstname()
+
         );
         return json_encode($customerData);
     }
