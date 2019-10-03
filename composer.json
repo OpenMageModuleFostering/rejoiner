@@ -1,16 +1,19 @@
 {
-    "name": "OpenMageModuleFostering/Rejoiner",
+    "name": "OpenMageModuleFostering\/Rejoiner",
     "type": "magento-module",
     "license": "OSL-v3.0",
     "homepage": "",
     "description": "Rejoiner Cart Abandonment Remarketing",
     "authors": [
-    {
-        "name": "Mike",
-        "email": "mike@rejoiner.com"
-    }
-],
+        {
+            "name": "Mike",
+            "email": "mike@rejoiner.com"
+        }
+    ],
     "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    }
+        "magento-hackathon\/magento-composer-installer": "*"
+    },
+    "keywords": [
+        "openmage-module"
+    ]
 }
